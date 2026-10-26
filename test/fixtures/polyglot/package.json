@@ -1,0 +1,10 @@
+{
+  "name": "polyglot-intelligence-fixture",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "dependencies": { "fixture-unbounded-package": "*" },
+  "scripts": {
+    "test": "node -e \"require('fs').writeFileSync('DANGEROUS_EXECUTED','repository script executed')\"",
+    "postinstall": "node -e \"require('fs').writeFileSync('DANGEROUS_EXECUTED','install script executed')\""
+  }
+}

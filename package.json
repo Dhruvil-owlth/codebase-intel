@@ -1,0 +1,27 @@
+{
+  "name": "codebase-intel",
+  "version": "0.1.0",
+  "description": "Evidence-backed, model-independent repository intelligence and engineering roadmaps",
+  "type": "module",
+  "bin": { "codebase-intel": "dist/cli.js" },
+  "exports": { ".": "./dist/index.js", "./adapters": "./dist/adapters.js" },
+  "files": ["dist", "README.md", "docs", "templates", ".agents/skills", "LICENSE"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test --test-concurrency=1 test/*.test.mjs",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "demo": "npm run build && node dist/cli.js audit --target test/fixtures/polyglot --output work/demo",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "ignore": "^7.0.5",
+    "minimatch": "^10.0.3",
+    "typescript": "^5.9.3",
+    "undici": "^7.16.0",
+    "yaml": "^2.8.1",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": { "@types/node": "^24.10.0" },
+  "license": "MIT"
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "target": ".",
+  "output": "docs/codebase-intelligence",
+  "include": [
+    "**/*"
+  ],
+  "exclude": [],
+  "depth": "standard",
+  "specialists": [
+    "correctness",
+    "performance",
+    "security",
+    "testing",
+    "maintainability",
+    "architecture",
+    "dependencies",
+    "model-review"
+  ],
+  "concurrency": 4,
+  "budgets": {
+    "maxFiles": 30000,
+    "maxFileBytes": 1048576,
+    "maxTotalBytes": 150000000,
+    "maxRunSeconds": 600,
+    "contextTokens": 12000,
+    "maxModelCalls": 8,
+    "toolTimeoutMs": 15000
+  },
+  "tools": {
+    "git": true,
+    "python": true
+  },
+  "privacy": {
+    "sendSource": true,
+    "redact": true
+  },
+  "network": {
+    "enabled": true,
+    "allowedOrigins": [
+      "https://api.anthropic.com"
+    ]
+  },
+  "model": {
+    "provider": "anthropic",
+    "name": "YOUR_SUPPORTED_MODEL_ID",
+    "baseUrl": "https://api.anthropic.com/v1",
+    "apiKeyEnv": "ANTHROPIC_API_KEY",
+    "timeoutMs": 30000,
+    "maxRetries": 1
+  },
+  "weights": {
+    "severity": 5,
+    "confidence": 2,
+    "security": 2,
+    "effort": 1,
+    "risk": 1
+  },
+  "retention": 20,
+  "verbosity": "detailed",
+  "resume": "reuse-unchanged"
+}

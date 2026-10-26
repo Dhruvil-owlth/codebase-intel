@@ -1,0 +1,5 @@
+{
+  "name": "correct-fixture",
+  "private": true,
+  "engines": { "node": ">=22" }
+}

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+work/
+output/
+*.tgz
+.codebase-intel/
+docs/codebase-intelligence/
+.env

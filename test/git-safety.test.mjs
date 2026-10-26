@@ -1,0 +1,32 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import os from 'node:os';
+import { spawnSync } from 'node:child_process';
+import { ConfigSchema } from '../dist/schema.js';
+import { audit } from '../dist/orchestrator.js';
+import { runTool } from '../dist/tools.js';
+
+test('Git discovery never executes repository-configured content filters', {skip:process.platform==='win32'}, async t=>{
+  const root=await fs.mkdtemp(path.join(os.tmpdir(),'intel-git-safety-'));
+  t.after(()=>fs.rm(root,{recursive:true,force:true}));
+  const target=path.join(root,'repository');await fs.mkdir(target);
+  const git=(args)=>{const result=spawnSync('git',args,{cwd:target,encoding:'utf8',env:{PATH:process.env.PATH,GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:'/dev/null'}});
+    assert.equal(result.status,0,result.stderr);};
+  git(['init','-q']);
+  await fs.writeFile(path.join(target,'.gitattributes'),'*.ts filter=audit\n');
+  await fs.writeFile(path.join(target,'app.ts'),'export const value = 1;\n');
+  git(['add','.']);
+  const marker=path.join(root,'filter-executed');
+  git(['config','filter.audit.clean',`touch '${marker}' && cat`]);
+  await fs.writeFile(path.join(target,'app.ts'),'export const value = 2;\n');
+  const config=ConfigSchema.parse({target,output:path.join(root,'reports'),tools:{git:true,python:false}});
+  const run=await audit(config);
+  assert.equal(run.validation.valid,true);
+  assert.ok(run.index.git.dirty.some(p=>p.includes('app.ts')));
+  await assert.rejects(fs.access(marker),{code:'ENOENT'});
+  assert.ok(run.index.coverage.tools.every(tool=>!tool.command.includes('status')));
+  await assert.rejects(runTool('git',['-c','core.fsmonitor=false','status'],target,undefined,config),/not allowlisted/);
+  await assert.rejects(runTool('python',['-I','-S','-c','print("arbitrary code")'],target,undefined,config),/not allowlisted/);
+});
